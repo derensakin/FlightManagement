@@ -1,0 +1,144 @@
+
+import pymysql
+from faker import Faker
+import random
+import datetime
+import re 
+
+# Initialize Faker
+fake = Faker()
+# Function to create username
+def create_username(first_name, last_name):
+    consonants = ''.join([c for c in first_name if c.lower() not in 'aeiou'])
+    consonant_count = len(consonants)
+    username = f"{consonants.lower()}{last_name.lower()}{consonant_count}"
+    return username
+
+# Function to create password
+def create_password(first_name, last_name):
+    vowels = ''.join([c for c in first_name if c.lower() in 'aeiou'])
+    consonants = ''.join([c for c in first_name if c.lower() not in 'aeiou'])
+    password = f"{last_name.lower()}{len(vowels) * len(consonants)}{first_name.capitalize()}."
+    return password
+
+# Database connection
+connection = pymysql.connect(host='127.0.0.1', user='root', password='Mert47', db='my_database', port=3306)
+cursor = connection.cursor()
+
+# Insert 100 flights
+for flight_number in range(1, 101):
+    flight_source = fake.city()
+    flight_destination = fake.city()
+    boarding_time = fake.date_time_this_decade(before_now=False, after_now=True)
+    # Adjust landing_time to be some hours after boarding_time
+    landing_time = fake.date_time_between_dates(datetime_start=boarding_time, datetime_end=boarding_time + datetime.timedelta(hours=random.randint(1, 12)))
+    duration = f"{random.randint(1, 12)} hours"
+    vehicle_type = random.choice(['Boeing 737', 'Airbus A320', 'Boeing 777'])
+    
+    cursor.execute("""
+        INSERT INTO Flight (flight_source, flight_destination, boarding_time, landing_time, duration, vehicle_type)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (flight_source, flight_destination, boarding_time, landing_time, duration, vehicle_type))
+
+    # Insert 100 seats for each flight
+    for seat_number in range(1, 101):
+        seat_type = random.choice(['Economy', 'Business', 'First Class'])
+        is_occupied = random.choice([True, False])
+        cursor.execute("""
+            INSERT INTO Seat (seat_number, seat_type, flight_id, is_occupied)
+            VALUES (%s, %s, %s, %s)
+        """, (seat_number, seat_type, flight_number, is_occupied))
+
+    # Insert 100 passengers for each flight
+    for _ in range(100):
+        first_name = fake.first_name()
+        last_name = fake.last_name()
+        is_infant = random.choice([True, False])
+        cursor.execute("""
+            INSERT INTO Passenger (first_name, last_name, flight_id, is_infant)
+            VALUES (%s, %s, %s, %s)
+        """, (first_name, last_name, flight_number, is_infant))
+        # Create and insert authentication details for each passenger
+        username = create_username(first_name, last_name)
+        password = create_password(first_name, last_name)
+        cursor.execute("INSERT INTO Authentication (username, password, user_type) VALUES (%s, %s, 'passenger')", (username, password))
+
+    # Insert crew, assuming each flight has 1 pilot and 1 co-pilot
+    cursor.execute("INSERT INTO FlightCrew (flight_number) VALUES (%s)", (flight_number,))
+    crew_id = cursor.lastrowid  # Get the last inserted id for use in crew and pilot
+
+    # Insert 1 pilot and 1 co-pilot
+    for role in ['Pilot', 'Co-pilot']:
+        cursor.execute("INSERT INTO Pilot (crew_id, vehicle_restriction, allowed_range, seniority_level) VALUES (%s, %s, %s, %s)", 
+                       (crew_id, vehicle_type, 5000, random.randint(1, 10)))
+
+    # Assuming 3 additional cabin crew members per flight
+    for _ in range(3):
+        cursor.execute("INSERT INTO CabinCrew (attendant_type) VALUES (%s)", (random.choice(['Lead', 'Safety', 'Service']),))
+        cabin_crew_id = cursor.lastrowid
+        cursor.execute("INSERT INTO Crew (crew_id, attendant_ids) VALUES (%s, %s)", (crew_id, cabin_crew_id))
+
+# Commit changes and close connection
+connection.commit()
+connection.close()
+----------------------------------------------------------------------------------
+USE my_database
+;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Mert47';
+FLUSH PRIVILEGES;
+
+ CREATE TABLE Flight (
+    flight_number INT AUTO_INCREMENT PRIMARY KEY,
+    flight_source VARCHAR(255),
+    flight_destination VARCHAR(255),
+    boarding_time DATETIME,
+    landing_time DATETIME,
+    duration VARCHAR(50),
+    vehicle_type VARCHAR(50)
+);
+CREATE TABLE Passenger (
+    passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    flight_id INT,
+    is_infant BOOLEAN,
+    FOREIGN KEY (flight_id) REFERENCES Flight(flight_number)
+);
+CREATE TABLE Seat (
+    seat_number INT AUTO_INCREMENT PRIMARY KEY,
+    seat_type VARCHAR(50),
+    flight_id INT,
+    is_occupied BOOLEAN,
+    FOREIGN KEY (flight_id) REFERENCES Flight(flight_number)
+);
+
+
+CREATE TABLE FlightCrew (
+    crew_id INT AUTO_INCREMENT PRIMARY KEY,
+    flight_number INT,
+    FOREIGN KEY (flight_number) REFERENCES Flight(flight_number)
+); 
+CREATE TABLE CabinCrew (
+    crew_id INT AUTO_INCREMENT PRIMARY KEY,
+    attendant_type VARCHAR(100)
+);
+CREATE TABLE Crew (
+    crew_id INT,
+    attendant_ids INT,
+    FOREIGN KEY (crew_id) REFERENCES FlightCrew(crew_id),
+    FOREIGN KEY (attendant_ids) REFERENCES CabinCrew(crew_id)
+);
+
+CREATE TABLE Pilot (
+    crew_id INT,
+    vehicle_restriction VARCHAR(100),
+    allowed_range FLOAT,
+    seniority_level INT,
+    FOREIGN KEY (crew_id) REFERENCES FlightCrew(crew_id)
+);
+CREATE TABLE Authentication (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    password VARCHAR(255),
+    user_type ENUM('passenger', 'flight_crew', 'pilot', 'cabin_crew')
+);
