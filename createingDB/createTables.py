@@ -26,6 +26,7 @@ def create_flight_crew_table(connection):
             CREATE TABLE IF NOT EXISTS FlightCrew (
                 ID INT AUTO_INCREMENT PRIMARY KEY,
                 NAME VARCHAR(50),
+                AGE INT,
                 GENDER VARCHAR(10),
                 NATIONALITY VARCHAR(50),
                 VEHICLE VARCHAR(50),
