@@ -72,7 +72,7 @@ def create_cabin_crew_table(connection):
             NAME VARCHAR(50),
             AGE INT,
             GENDER VARCHAR(10),
-            NATIONALITY VARCHAR(50),
+            NATIONALITY VARCHAR(80),
             TYPE VARCHAR(50),
             VEHİCLE VARCHAR(50)
             )
@@ -103,6 +103,7 @@ def create_cabin_crew_known_languages_table(connection):
         cursor.close()
     except Error as e:
         print(f"Error creating table: {e}")
+
 
 def create_passanger_information_table(connection):
     try:
@@ -135,14 +136,14 @@ def create_flight_information_table(connection):
             DEPARTURE_DATE DATETIME,
             DURATION INT,
             DISTANCE INT,
-            SOURCE_COUNTRY VARCHAR(50),
-            SOURCE_CITY VARCHAR(50),
-            SOURCE_AIRPORT VARCHAR(50),
+            SOURCE_COUNTRY VARCHAR(80),
+            SOURCE_CITY VARCHAR(80),
+            SOURCE_AIRPORT VARCHAR(80),
             SOURCE_AIRPORT_CODE VARCHAR(3),
             VEHICLE VARCHAR(50),
             SHARED_FLIGHT VARCHAR(6)
-            
-            
+
+
             )
             """
         )
@@ -196,6 +197,7 @@ def create_flight_pilot_table(connection):
     except Error as e:
         print(f"Error creating table: {e}")
 
+
 def create_flight_cabin_crew_table(connection):
     try:
         cursor = connection.cursor()
@@ -216,6 +218,7 @@ def create_flight_cabin_crew_table(connection):
     except Error as e:
         print(f"Error creating table: {e}")
 
+
 def cabin_crew_food_table(connection):
     try:
         cursor = connection.cursor()
@@ -226,7 +229,7 @@ def cabin_crew_food_table(connection):
             FOOD VARCHAR(50),
             PRIMARY KEY(CABIN_CREW_ID,FOOD),
             FOREIGN KEY(CABIN_CREW_ID) REFERENCES CabinCrew(ID)
-            
+
             )
             """
         )
@@ -246,19 +249,22 @@ def main():
 
     connection = create_connection(host, port, user, password, database)
     if connection:
-        create_flight_crew_table(connection)
-        create_cabin_crew_table(connection)
-        create_cabin_crew_known_languages_table(connection)
-        create_flight_crew_known_languages_table(connection)
-        create_passanger_information_table(connection)
+        # create_flight_crew_table(connection)
+        # create_cabin_crew_table(connection)
+        # create_cabin_crew_known_languages_table(connection)
+        # create_flight_crew_known_languages_table(connection)
+        # create_passanger_information_table(connection)
         create_flight_information_table(connection)
         create_ticket_table(connection)
-        create_flight_pilot_table(connection)
-        create_flight_cabin_crew_table(connection)
-        cabin_crew_food_table(connection)
+        # create_flight_pilot_table(connection)
+        # create_flight_cabin_crew_table(connection)
+        # cabin_crew_food_table(connection)
 
         connection.close()
 
 
 if __name__ == '__main__':
     main()
+
+
+
