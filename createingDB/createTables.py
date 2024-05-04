@@ -249,16 +249,16 @@ def main():
 
     connection = create_connection(host, port, user, password, database)
     if connection:
-        # create_flight_crew_table(connection)
-        # create_cabin_crew_table(connection)
-        # create_cabin_crew_known_languages_table(connection)
-        # create_flight_crew_known_languages_table(connection)
-        # create_passanger_information_table(connection)
+        create_flight_crew_table(connection)
+        create_cabin_crew_table(connection)
+        create_cabin_crew_known_languages_table(connection)
+        create_flight_crew_known_languages_table(connection)
+        create_passanger_information_table(connection)
         create_flight_information_table(connection)
         create_ticket_table(connection)
-        # create_flight_pilot_table(connection)
-        # create_flight_cabin_crew_table(connection)
-        # cabin_crew_food_table(connection)
+        create_flight_pilot_table(connection)
+        create_flight_cabin_crew_table(connection)
+        cabin_crew_food_table(connection)
 
         connection.close()
 
