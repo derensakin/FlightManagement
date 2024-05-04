@@ -318,7 +318,7 @@ def create_fake_flight_pilot(connection):
                 """
                 SELECT ID FROM FLIGHTCREW WHERE VEHICLE = %s AND FLIGHT_RANGE > %s AND SENIORITY = "junior"
                 """
-                , (str(flightVehicle), int(flightDistance))
+                , (flightVehicle, int(flightDistance))
             )
             appropriatePilots = cursor.fetchall()
 
@@ -355,6 +355,82 @@ def create_fake_flight_pilot(connection):
         print(f"Error inserting flight-pilot values: {e}")
 
 
+def create_fake_flight_cabin_crew(connection) :
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT ID, VEHICLE FROM FLIGHTINFORMATION
+            """
+        )
+        flightList = cursor.fetchall()
+        for flight in flightList:
+            vehicle = flight[1]
+            cursor.execute(
+                f"""
+                SELECT ID
+                FROM CABINCREW
+                WHERE VEHICLE = "{vehicle}" AND TYPE = "Chief"
+                """
+            )
+            chiefList = cursor.fetchall()
+            numChiefs = random.randrange(1, 4)
+            for _ in range(numChiefs):
+                if len(chiefList) > 0:
+                    chief = random.choice(chiefList)
+                    chiefList.remove(chief)
+                    cursor.execute(
+
+                        """
+                        INSERT INTO FLIGHTCABINCREW VALUES(%s,%s)
+                        """,(flight[0], str(chief[0]))
+                    )
+                    connection.commit()
+            cursor.execute(
+                f"""
+                SELECT ID 
+                FROM CABINCREW
+                WHERE VEHICLE = "{vehicle}" AND TYPE = "Regular"
+                """
+            )
+            regularList = cursor.fetchall()
+            numRegulars = random.randrange(4, 16)
+            for _ in range(numRegulars):
+                if len(regularList) > 0:
+                    regular = random.choice(regularList)
+                    regularList.remove(regular)
+                    cursor.execute(f"""
+                    INSERT INTO FLIGHTCABINCREW VALUES(%s,%s)
+                    """,
+                    (flight[0], str(regular[0]))
+                    )
+                    connection.commit()
+            cursor.execute(
+                f"""
+                SELECT ID FROM CABINCREW
+                WHERE VEHICLE = "{vehicle}" AND TYPE = "Chef"
+                """
+            )
+            chefList = cursor.fetchall()
+            numChefs = random.randrange(0, 2)
+            for _ in range(numChefs):
+                if len(chefList) > 0:
+                    chef = random.choice(chefList)
+                    chefList.remove(chef)
+                    cursor.execute(
+                        """
+                        INSERT INTO FLIGHTCABINCREW VALUES(%s,%s)
+                        """
+                        ,(flight[0], str(chef[0]))
+                    )
+                    connection.commit()
+        cursor.close()
+    except Error as e:
+        print(f"Error inserting flight cabin crew values: {e}")
+
+
+
+
 def main():
     host = 'localhost'
     port = 3306
@@ -363,16 +439,16 @@ def main():
     database = 'myDB'
 
     connection = create_connection(host, port, user, password, database)
-    # create_fake_pilot(1000, connection)
-    # create_fake_cabin_crew(1000, connection)
-    # create_fake_passenger(1000, connection)
-    # create_fake_flight_known_languages(connection)
-    # create_fake_cabin_crew_known_languages(connection)
-    # create_fake_cabin_crew_food(connection)
-    # create_fake_flight(100, connection)
-    # create_fake_ticket(connection)
+    create_fake_pilot(1000, connection)
+    create_fake_cabin_crew(1000, connection)
+    create_fake_passenger(1000, connection)
+    create_fake_flight_known_languages(connection)
+    create_fake_cabin_crew_known_languages(connection)
+    create_fake_cabin_crew_food(connection)
+    create_fake_flight(100, connection)
+    create_fake_ticket(connection)
     create_fake_flight_pilot(connection)
-
+    create_fake_flight_cabin_crew(connection)
     connection.close()
 
 
