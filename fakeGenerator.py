@@ -439,16 +439,16 @@ def main():
     database = 'myDB'
 
     connection = create_connection(host, port, user, password, database)
-    create_fake_pilot(1000, connection)
-    create_fake_cabin_crew(1000, connection)
-    create_fake_passenger(1000, connection)
-    create_fake_flight_known_languages(connection)
+    # create_fake_pilot(1000, connection)
+    # create_fake_cabin_crew(1000, connection)
+    # create_fake_passenger(1000, connection)
+    # create_fake_flight_known_languages(connection)
     create_fake_cabin_crew_known_languages(connection)
-    create_fake_cabin_crew_food(connection)
-    create_fake_flight(100, connection)
-    create_fake_ticket(connection)
-    create_fake_flight_pilot(connection)
-    create_fake_flight_cabin_crew(connection)
+    # create_fake_cabin_crew_food(connection)
+    # create_fake_flight(100, connection)
+    # create_fake_ticket(connection)
+    # create_fake_flight_pilot(connection)
+    # create_fake_flight_cabin_crew(connection)
     connection.close()
 
 
