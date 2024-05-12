@@ -16,6 +16,15 @@ def create_connection(host: str, port: int, database: str, user: str, password: 
     except Error as e:
         print(f"Error connecting to MySQL database: {e}")
         
+def findFlightByID(connection: mysql.connector.connection, id: str) -> list:
+    
+    try:
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM FLIGHTINFORMATION WHERE ID = '{id}'")
+        return cursor.fetchone()
+    except Error as e:
+        print(f"Error finding flight by ID in MySQL database: {e}")
+        
 def findFlightsAdvanced(connection: mysql.connector.connection, filters: dict) -> list:
     base_query = "SELECT * FROM FLIGHTINFORMATION"
     conditions = []
