@@ -54,3 +54,30 @@ def getAllFlights():
     except Exception as e:
         print(e)
         return str(e), 500
+
+
+@views.route('/getTicketsByFlight', methods=['POST'])
+def getTicketsByFlight():
+    try:
+        flightID = request.form.get('flightID')
+        conn = create_connection("localhost", "***", "***", "***", "***")
+        tickets = findTicketsByFlightID(conn, flightID)
+        conn.close()
+        ticket_list = [{"ticket_id": ticket[0], "seat_number": ticket[1], "type": ticket[2], "passenger_id": ticket[3]} for ticket in tickets]
+        return jsonify(ticket_list)
+    except Exception as e:
+        print(e)
+        return str(e), 500
+
+@views.route('/getFlightPilotsByFlight', methods=['POST'])
+def getFlightPilotsByFlight():
+    try:
+        flightID = request.form.get('flightID')
+        conn = create_connection("localhost", "***", "***", "***", "***")
+        pilots = findFlightPilotsByFlightID(conn, flightID)
+        conn.close()
+        pilot_list = [{"flight_id": pilot[0], "pilot_id": pilot[1]} for pilot in pilots]
+        return jsonify(pilot_list)
+    except Exception as e:
+        print(e)
+        return str(e), 500
