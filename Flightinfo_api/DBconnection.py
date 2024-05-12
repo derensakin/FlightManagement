@@ -42,3 +42,18 @@ def findFlightsByCountry(connection: mysql.connector.connection, country: str) -
         return cursor.fetchall()
     except Error as e:
         print(f"Error finding flights by country in MySQL database: {e}")
+def findTicketsByFlightID(connection: mysql.connector.connection, flight_id: str) -> list:
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM TICKET WHERE FLIGHT_ID = %s", (flight_id,))
+        return cursor.fetchall()
+    except Error as e:
+        print(f"Error finding tickets by flight ID in MySQL database: {e}")
+
+def findFlightPilotsByFlightID(connection: mysql.connector.connection, flight_id: str) -> list:
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM FLIGHTPILOT WHERE FLIGHT_ID = %s", (flight_id,))
+        return cursor.fetchall()
+    except Error as e:
+        print(f"Error finding flight pilots by flight ID in MySQL database: {e}")
