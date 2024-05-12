@@ -16,32 +16,31 @@ def create_connection(host: str, port: int, database: str, user: str, password: 
     except Error as e:
         print(f"Error connecting to MySQL database: {e}")
         
-def findFlightByID(connection: mysql.connector.connection, id: str) -> list:
+def findFlightsAdvanced(connection: mysql.connector.connection, filters: dict) -> list:
+    base_query = "SELECT * FROM FLIGHTINFORMATION"
+    conditions = []
+    params = []
     
-    try:
-        cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM FLIGHTINFORMATION WHERE ID = '{id}'")
-        return cursor.fetchone()
-    except Error as e:
-        print(f"Error finding flight by ID in MySQL database: {e}")
+    
+    # Dinamik sorgu 
+    for field, value in filters.items():
+        if value:
+            conditions.append(f"{field} = %s")
+            params.append(value)
 
-def findAllFlights(connection: mysql.connector.connection) -> list:
-   
+    if conditions:
+        query = f"{base_query} WHERE {' AND '.join(conditions)}"
+    else:
+        query = base_query  #filtre yoksa tüm kayıtlar
+
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM FLIGHTINFORMATION")
+        cursor.execute(query, tuple(params))
         return cursor.fetchall()
     except Error as e:
-        print(f"Error finding all flights in MySQL database: {e}")
+        print(f"Error executing query in findFlightsAdvanced: {e}")
+        return []
 
-def findFlightsByCountry(connection: mysql.connector.connection, country: str) -> list:
-    
-    try:
-        cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM FLIGHTINFORMATION WHERE SOURCE_COUNTRY = '{country}' OR DESTINATION_COUNTRY = '{country}'")
-        return cursor.fetchall()
-    except Error as e:
-        print(f"Error finding flights by country in MySQL database: {e}")
 def findTicketsByFlightID(connection: mysql.connector.connection, flight_id: str) -> list:
     try:
         cursor = connection.cursor()
