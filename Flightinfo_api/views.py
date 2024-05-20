@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from databaseConnection import create_connection, findFlightByID, findAllFlights
+from DBconnection import create_connection, findFlightByID, findFlightsAdvanced, findTicketsByFlightID, findFlightPilotsByFlightID
 import json
 
 views = Blueprint('views', __name__)
@@ -8,7 +8,7 @@ views = Blueprint('views', __name__)
 def getFlight():
     try:
         flightID = request.form.get('flightID')  
-        conn = create_connection("localhost", "***", "***", "***", "1234")
+        conn = create_connection("localhost", 3306, "database_name", "user", "password")
         flightDetails = findFlightByID(conn, flightID)
         conn.close()
         if flightDetails:
@@ -33,7 +33,7 @@ def getFlight():
 @views.route('/searchFlights', methods=['POST'])
 def searchFlights():
     try:
-        data = request.get_json()  # POST JSON verisini alır
+        data = request.get_json()
         filters = {
             'id': data.get('id'),
             'departure_date': data.get('departure_date'),
@@ -47,10 +47,9 @@ def searchFlights():
             'shared_flight': data.get('shared_flight')
         }
 
-        # None değerleri filtrelerden temizleyin
         filters = {k: v for k, v in filters.items() if v is not None}
 
-        conn = create_connection("localhost", "***", "***", "***", "***")
+        conn = create_connection("localhost", 3306, "database_name", "user", "password")
         flights = findFlightsAdvanced(conn, filters)
         conn.close()
 
@@ -72,12 +71,11 @@ def searchFlights():
         print(e)
         return str(e), 500
 
-
 @views.route('/getTicketsByFlight', methods=['POST'])
 def getTicketsByFlight():
     try:
         flightID = request.form.get('flightID')
-        conn = create_connection("localhost", "***", "***", "***", "***")
+        conn = create_connection("localhost", 3306, "database_name", "user", "password")
         tickets = findTicketsByFlightID(conn, flightID)
         conn.close()
         ticket_list = [{"ticket_id": ticket[0], "seat_number": ticket[1], "type": ticket[2], "passenger_id": ticket[3]} for ticket in tickets]
@@ -90,7 +88,7 @@ def getTicketsByFlight():
 def getFlightPilotsByFlight():
     try:
         flightID = request.form.get('flightID')
-        conn = create_connection("localhost", "***", "***", "***", "***")
+        conn = create_connection("localhost", 3306, "database_name", "user", "password")
         pilots = findFlightPilotsByFlightID(conn, flightID)
         conn.close()
         pilot_list = [{"flight_id": pilot[0], "pilot_id": pilot[1]} for pilot in pilots]
