@@ -1,7 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
 
-
 def create_connection(host: str, port: int, database: str, user: str, password: str) -> mysql.connector.connection:
     try:
         connection = mysql.connector.connect(
@@ -10,28 +9,26 @@ def create_connection(host: str, port: int, database: str, user: str, password: 
             user=user,
             password=password,
             database=database
-
         )
         return connection
     except Error as e:
         print(f"Error connecting to MySQL database: {e}")
-        
+        return None
+
 def findFlightByID(connection: mysql.connector.connection, id: str) -> list:
-    
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM FLIGHTINFORMATION WHERE ID = '{id}'")
+        cursor.execute("SELECT * FROM FLIGHTINFORMATION WHERE ID = %s", (id,))
         return cursor.fetchone()
     except Error as e:
         print(f"Error finding flight by ID in MySQL database: {e}")
-        
+        return None
+
 def findFlightsAdvanced(connection: mysql.connector.connection, filters: dict) -> list:
     base_query = "SELECT * FROM FLIGHTINFORMATION"
     conditions = []
     params = []
     
-    
-    # Dinamik sorgu 
     for field, value in filters.items():
         if value:
             conditions.append(f"{field} = %s")
@@ -40,7 +37,7 @@ def findFlightsAdvanced(connection: mysql.connector.connection, filters: dict) -
     if conditions:
         query = f"{base_query} WHERE {' AND '.join(conditions)}"
     else:
-        query = base_query  #filtre yoksa tüm kayıtlar
+        query = base_query
 
     try:
         cursor = connection.cursor()
@@ -57,6 +54,7 @@ def findTicketsByFlightID(connection: mysql.connector.connection, flight_id: str
         return cursor.fetchall()
     except Error as e:
         print(f"Error finding tickets by flight ID in MySQL database: {e}")
+        return []
 
 def findFlightPilotsByFlightID(connection: mysql.connector.connection, flight_id: str) -> list:
     try:
@@ -65,3 +63,4 @@ def findFlightPilotsByFlightID(connection: mysql.connector.connection, flight_id
         return cursor.fetchall()
     except Error as e:
         print(f"Error finding flight pilots by flight ID in MySQL database: {e}")
+        return []
