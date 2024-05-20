@@ -1,4 +1,4 @@
-from createApplication import create_app
+from createapp import create_app
 
 def main():
     try:
@@ -6,5 +6,6 @@ def main():
         app.run(debug=True)  
     except Exception as e:
         print(e)  
+
 if __name__ == '__main__':
-    main()  
+    main()
