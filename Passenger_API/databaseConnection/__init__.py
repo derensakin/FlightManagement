@@ -14,6 +14,55 @@ def create_connection(host: str, port: int, database: str, user: str, password: 
         return connection
     except Error as e:
         print(f"Error connecting to MySQL database: {e}")
+def change_seats(connection: mysql.connector.connection, passenger_id1: int, passenger_id2: int,  flight_id: str) -> bool:
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            f"""
+            SELECT * FROM Ticket
+            WHERE PASSENGER_ID = {passenger_id1} AND FLIGHT_ID = "{flight_id}"
+            """
+        )
+        print(passenger_id1, passenger_id2, flight_id)
+        first_ticket = cursor.fetchone()
+
+        cursor.execute(
+            f"""
+            SELECT * FROM Ticket
+            WHERE PASSENGER_ID = {passenger_id2} AND FLIGHT_ID = "{flight_id}"
+            """
+        )
+        print(passenger_id1, passenger_id2, flight_id)
+        second_ticket = cursor.fetchone()
+
+        cursor.execute(
+        f"""
+        UPDATE Ticket
+        SET SEAT_NUMBER = {first_ticket[1]}
+        WHERE PASSENGER_ID = {passenger_id2} AND FLIGHT_ID = "{flight_id}" 
+        """
+        )
+        print(passenger_id1, passenger_id2, flight_id)
+        connection.commit()
+
+        cursor.execute(
+            f"""
+                UPDATE Ticket
+                SET SEAT_NUMBER = {second_ticket[1]}
+                WHERE PASSENGER_ID = {passenger_id1} AND FLIGHT_ID = "{flight_id}" 
+                """
+        )
+        print(passenger_id1, passenger_id2, flight_id)
+        connection.commit()
+        return True
+
+    except Error as e:
+        print(f"Error connecting to MySQL database: {e}")
+        return False
+
+
+
+
 
 def findPassengersByFlightID(connection: mysql.connector.connection, flight_id: str) -> list:
     try:
