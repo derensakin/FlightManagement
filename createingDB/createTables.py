@@ -164,7 +164,7 @@ def create_ticket_table(connection):
             SEAT_NUMBER INT,
             TYPE VARCHAR(50),
             PASSENGER_ID INT,
-            PRIMARY KEY(FLIGHT_ID,SEAT_NUMBER),
+            PRIMARY KEY(FLIGHT_ID,PASSENGER_ID),
             FOREIGN KEY(FLIGHT_ID) REFERENCES FlightInformation(ID),
             FOREIGN KEY(PASSENGER_ID) REFERENCES PassangerInformation(ID)
             )
