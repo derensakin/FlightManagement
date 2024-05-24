@@ -4,6 +4,24 @@ import json
 
 views = Blueprint('views', __name__)
 
+views = Blueprint('views', __name__)
+
+
+@views.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data['username']
+    password = data['password']
+    conn = create_connection("localhost",3306,"myDB","root", "1234")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM users WHERE username = \"{username}\"")
+    data = cursor.fetchone()
+    if data[1] == password:
+        return jsonify({'status': 'success', 'data': [data[0],data[2]]}), 200
+    else:
+        return jsonify({'status': 'fail'}), 401
+
+
 @views.route('/getFlight', methods=['POST'])
 def getFlight():
     try:
