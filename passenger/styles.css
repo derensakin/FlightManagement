@@ -1,0 +1,155 @@
+:root {
+    --primary-color: #005288;
+    --secondary-color: #333;
+    --background-color: #f4f4f9;
+    --text-color: #333;
+    --nav-bg-color: #e1e5ee;
+    --nav-hover-color: var(--primary-color);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    height: 100px; /* Fixed header height */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+h1 {
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    margin-top: 100px; /* Adjust margin to ensure content is below the header */
+}
+
+nav {
+    width: 200px; /* Adjusted width for better text visibility */
+    background-color: var(--nav-bg-color);
+    height: calc(100vh - 100px); /* Full height of the viewport minus header height */
+    position: fixed;
+    top: 100px; /* Start just under the header */
+    left: 0; /* Align to the left */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    padding-top: 20px; /* Add padding to ensure content starts below header */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    height: 100%; /* Full height of the navigation */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the start */
+}
+
+nav ul li {
+    padding: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li a:hover {
+    color: var(--nav-hover-color);
+}
+
+.material-icons {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+main {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    margin-left: 200px; /* Adjust margin to accommodate the fixed sidebar */
+    height: calc(100vh - 100px); /* Adjust height to ensure content is not cut off */
+}
+
+footer {
+    background-color: var(--secondary-color);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    justify-content: center; /* Center items horizontally */
+    margin: 0 auto; /* Center the container horizontally */
+    width: 50%; /* Set a width for the container */
+    padding-top: 20px; /* Add some padding to the top if needed */
+    text-align: left; /* Align text to the left */
+}
+
+.search-container input[type="text"],
+.search-container input[type="date"] {
+    width: 100%; /* Make input full width within the container */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+}
+
+#results-table {
+    margin-top: 20px;
+}
+
+#results-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results-table th,
+#results-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#results-table th {
+    background-color: var(--nav-bg-color);
+}

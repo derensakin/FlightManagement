@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Company Passenger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="images/logo.png" alt="Company Logo" class="logo">
+            <h1>Passenger Portal</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="#" id="passenger-home-link"><span class="material-icons" aria-hidden="true">home</span> Home</a></li>
+                <li><a href="#" id="passenger-search-flight-link"><span class="material-icons" aria-hidden="true">search</span> Search Flight</a></li>
+                <li><a href="#" id="passenger-seating-plan-link"><span class="material-icons" aria-hidden="true">event_seat</span> View Seating Plan</a></li>
+                <li><a href="#" id="passenger-flight-info-link"><span class="material-icons" aria-hidden="true">info</span> Flight Information</a></li>
+                <li><a href="#" id="passenger-cabin-crew-info-link"><span class="material-icons" aria-hidden="true">group</span> Cabin Crew Information</a></li>
+                <li><a href="#" id="passenger-flight-crew-info-link"><span class="material-icons" aria-hidden="true">assignment_ind</span> Flight Crew Information</a></li>
+            </ul>
+        </nav>
+        <main>
+            <div id="login-container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2024 Flight Company. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
