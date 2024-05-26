@@ -102,3 +102,67 @@
 * **Database:** MySQL, NoSQL.
 * **DevOps:** Docker, CI/CD, Version Control.
 
+  # Steps
+  1. Clone the repository:
+     * git clone https://github.com/yourusername/flight-management-system.git
+     
+  2. Navigate to the project directory:
+    *  cd flight-management-system
+
+  3. Set up and activate the virtual environment (optional but recommended):
+     * python -m venv venv
+     * source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+     
+  4. Install backend dependencies:
+     * pip install -r requirements.txt
+     
+  5. Install frontend dependencies:
+     * npm install
+
+  6. Set up the database:
+     * python manage.py migrate
+     
+ # Usage
+## Running the Application
+1. Start the backend server:
+2. Start the frontend development server:
+3. Access the application at http://localhost:3000.
+
+   ## Running with Docker
+1. Build the Docker images:
+2. Run the Docker containers:
+
+##   Development
+
+### Running Tests
+* Backend:
+* Frontend:
+  ## Deployment
+* Build the Docker images:
+* Run the Docker containers:
+
+  Contributing
+
+1. Fork the repository.
+2. Create a new branch:
+3. Make your changes and commit them:
+4. Push to the branch:
+5. Open a pull request.
+
+## Team Members and Responsibilities
+**Product Owner**
+- Nur Deren Sakin
+
+**Frontend Team**
+- Nur Deren Sakin
+- Ali Eren Şahin
+- Kemal Efe Kolaylı
+- Mert Genç
+- Turhan Can Ada
+
+**Backend Team**
+- Ege Diriöz
+- İsmail Aydın Karayılan
+- Cem Görkem Baysal
+- Alp Bartu Utar
+- Alper Çamlı
