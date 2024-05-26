@@ -1,7 +1,7 @@
 #get_passenger_api/app/main.py
 import unittest
 from unittest.mock import patch, MagicMock
-from get_passenger_api import (
+from BackEnd import (
     create_connection,
     assign_seat,
     get_passengers,

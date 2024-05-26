@@ -1,7 +1,7 @@
 #Flightinfo_api/DBconnection.py
 import unittest
 from unittest.mock import patch, MagicMock
-from Flightinfo_api import (
+from BackEnd import (
     create_connection,
     findFlightByID,
     findFlightsAdvanced,
