@@ -1,3 +1,12 @@
+:root {
+    --primary-color: #005288;
+    --secondary-color: #333;
+    --background-color: #f4f4f9;
+    --text-color: #333;
+    --nav-bg-color: #e1e5ee;
+    --nav-hover-color: var(--primary-color);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,18 +15,22 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
 header {
-    background-color: #005288;
+    background-color: var(--primary-color);
     color: #fff;
-    text-align: center;
     padding: 20px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    height: 100px; /* Fixed header height */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -26,19 +39,34 @@ header {
     margin-right: 20px;
 }
 
+h1 {
+    margin: 0;
+}
+
 .container {
     display: flex;
-    flex-wrap: wrap;
+    margin-top: 100px; /* Adjust margin to ensure content is below the header */
 }
 
 nav {
-    flex: 1 1 200px;
-    background-color: #e1e5ee;
+    width: 200px; /* Adjusted width for better text visibility */
+    background-color: var(--nav-bg-color);
+    height: calc(100vh - 100px); /* Full height of the viewport minus header height */
+    position: fixed;
+    top: 100px; /* Start just under the header */
+    left: 0; /* Align to the left */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    padding-top: 20px; /* Add padding to ensure content starts below header */
 }
 
 nav ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+    height: 100%; /* Full height of the navigation */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the start */
 }
 
 nav ul li {
@@ -47,14 +75,14 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: var(--text-color);
     font-weight: bold;
     display: flex;
     align-items: center;
 }
 
 nav ul li a:hover {
-    color: #005288;
+    color: var(--nav-hover-color);
 }
 
 .material-icons {
@@ -63,14 +91,15 @@ nav ul li a:hover {
 }
 
 main {
-    flex: 3;
+    flex: 1;
     background-color: #fff;
     padding: 20px;
-    margin: 20px;
+    margin-left: 200px; /* Adjust margin to accommodate the fixed sidebar */
+    height: calc(100vh - 100px); /* Adjust height to ensure content is not cut off */
 }
 
 footer {
-    background-color: #333;
+    background-color: var(--secondary-color);
     color: #fff;
     text-align: center;
     padding: 20px;
@@ -79,49 +108,38 @@ footer {
     bottom: 0;
 }
 
-.login-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-box {
-    background-color: #005288;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.login-box h2 {
-    margin-bottom: 10px;
-    color: #fff;
-}
-
-.login-box form {
+.search-container {
     display: flex;
     flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    justify-content: center; /* Center items horizontally */
+    margin: 0 auto; /* Center the container horizontally */
+    width: 50%; /* Set a width for the container */
+    padding-top: 20px; /* Add some padding to the top if needed */
+    text-align: left; /* Align text to the left */
 }
 
-.login-box input {
-    margin-bottom: 10px;
-    padding: 8px;
+.search-container input[type="text"] {
+    width: 100%; /* Make input full width within the container */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.2em;
 }
 
-.login-box button {
-    padding: 8px 20px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
+.search-container button {
+    padding: 10px 20px;
+    font-size: 1.2em;
 }
 
-.login-box button:hover {
-    background-color: #555;
+/* Additional styles for the edit crew form */
+#editCrewForm {
+    margin-top: 20px;
+}
+
+#crewAttendantsList {
+    margin-top: 20px;
+    list-style-type: disc;
+    padding-left: 20px;
 }
