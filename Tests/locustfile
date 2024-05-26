@@ -1,0 +1,71 @@
+from locust import HttpUser, task, between
+import json
+
+# locust framework must be installed using pip
+'''
+    This file is used to simulate the user behavior of the system.
+    The user will perform the following operations:
+    1. Get flight crew
+    2. Get passenger
+    3. Change seats
+    4. Get passengers
+    5. Get flight
+    6. Search flights
+    7. Get tickets by flight
+    8. Get flight pilots by flight
+    
+'''
+class MyUser(HttpUser):
+    wait_time = between(1, 2)
+
+    @task
+    def get_flight_crew(self):
+        self.client.post("/getFlightCrew", data={"flightID": "CS1031"})
+
+    @task
+    def get_passenger(self):
+        self.client.post("/getPassenger", data={"flight_id": "CS1031"})
+
+    @task
+    def change_seats(self):
+        self.client.post("/changeSeats", data={
+            "flight_id": "CS1031",
+            "passenger_id1": 1,
+            "passenger_id2": 2
+        })
+
+    @task
+    def get_passengers(self):
+        self.client.get("/getPassengers", params={"flightID": "CS1031"})
+
+    @task
+    def get_flight(self):
+        self.client.post("/getFlight", data={"flightID": "CS1031"})
+
+    @task
+    def search_flights(self):
+        self.client.post("/searchFlights", json={
+            "id": "CS1031",
+            "departure_date": "2023-05-01",
+            "duration": 120,
+            "distance": 1000,
+            "source_country": "CountryA",
+            "source_city": "CityA",
+            "source_airport": "AirportA",
+            "source_airport_code": "AAA",
+            "vehicle": "Boeing 737",
+            "shared_flight": False
+        })
+
+    @task
+    def get_tickets_by_flight(self):
+        self.client.post("/getTicketsByFlight", data={"flightID": "CS1031"})
+
+    @task
+    def get_flight_pilots_by_flight(self):
+        self.client.post("/getFlightPilotsByFlight", data={"flightID": "CS1031"})
+
+
+if __name__ == "__main__":
+    import os
+    os.system("locust -f locustfile.py")

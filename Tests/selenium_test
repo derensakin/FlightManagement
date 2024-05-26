@@ -1,0 +1,158 @@
+from selenium_project_test import webdriver
+from selenium_project_test.webdriver.common.by import By
+from selenium_project_test.webdriver.common.keys import Keys
+import unittest
+import time
+import json
+
+
+class TestFlaskApp(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Chrome(executable_path='/path/to/chromedriver')
+        cls.driver.implicitly_wait(10)
+        cls.base_url = "http://localhost:3306"  # Update with your base URL
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+
+    def test_getFlightCrew(self):
+        driver = self.driver
+        driver.get(self.base_url + "/getFlightCrew")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flightID")
+        flight_id_input.send_keys("CS1031")
+        flight_id_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        flight_crew = json.loads(response)
+        self.assertTrue(len(flight_crew) > 0)
+        self.assertIn("ID", flight_crew[0])
+        self.assertIn("Languages", flight_crew[0])
+
+    def test_getPassengers(self):
+        driver = self.driver
+        driver.get(self.base_url + "/getPassengers")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flightID")
+        flight_id_input.send_keys("CS1031")
+        flight_id_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        passengers = json.loads(response)
+        self.assertTrue(len(passengers) > 0)
+        self.assertIn("ID", passengers[0])
+        self.assertIn("Seat Number", passengers[0])
+
+    def test_getFlight(self):
+        driver = self.driver
+        driver.get(self.base_url + "/getFlight")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flightID")
+        flight_id_input.send_keys("CS1031")
+        flight_id_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        flight = json.loads(response)
+        self.assertIn("id", flight)
+        self.assertIn("departure_date", flight)
+
+    def test_changeSeats(self):
+        driver = self.driver
+        driver.get(self.base_url + "/changeSeats")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flight_id")
+        passenger_id1_input = driver.find_element(By.NAME, "passenger_id1")
+        passenger_id2_input = driver.find_element(By.NAME, "passenger_id2")
+
+        flight_id_input.send_keys("CS1031")
+        passenger_id1_input.send_keys("1")
+        passenger_id2_input.send_keys("2")
+        passenger_id2_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        result = json.loads(response)
+        self.assertEqual(result["status"], "success")
+
+    def test_searchFlights(self):
+        driver = self.driver
+        driver.get(self.base_url + "/searchFlights")
+
+        # Fill the form and submit
+        search_data = {
+            "id": "CS1031",
+            "departure_date": "2024-05-25",
+            "duration": "5",
+            "distance": "1000",
+            "source_country": "USA",
+            "source_city": "New York",
+            "source_airport": "JFK",
+            "source_airport_code": "JFK",
+            "vehicle": "Boeing 737",
+            "shared_flight": "No"
+        }
+        for key, value in search_data.items():
+            driver.execute_script(f'document.getElementsByName("{key}")[0].value = "{value}";')
+
+        submit_button = driver.find_element(By.XPATH, '//input[@type="submit"]')
+        submit_button.click()
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        results = json.loads(response)
+        self.assertTrue(len(results) > 0)
+        self.assertIn("id", results[0])
+        self.assertIn("departure_date", results[0])
+
+    def test_getTicketsByFlight(self):
+        driver = self.driver
+        driver.get(self.base_url + "/getTicketsByFlight")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flightID")
+        flight_id_input.send_keys("CS1031")
+        flight_id_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        tickets = json.loads(response)
+        self.assertTrue(len(tickets) > 0)
+        self.assertIn("ticket_id", tickets[0])
+        self.assertIn("seat_number", tickets[0])
+
+    def test_getFlightPilotsByFlight(self):
+        driver = self.driver
+        driver.get(self.base_url + "/getFlightPilotsByFlight")
+
+        # Fill the form and submit
+        flight_id_input = driver.find_element(By.NAME, "flightID")
+        flight_id_input.send_keys("CS1031")
+        flight_id_input.send_keys(Keys.RETURN)
+
+        time.sleep(2)  # Wait for the response
+
+        response = driver.find_element(By.TAG_NAME, "body").text
+        pilots = json.loads(response)
+        self.assertTrue(len(pilots) > 0)
+        self.assertIn("flight_id", pilots[0])
+        self.assertIn("pilot_id", pilots[0])
+
+
+if __name__ == "__main__":
+    unittest.main()
