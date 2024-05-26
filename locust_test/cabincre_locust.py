@@ -8,7 +8,7 @@ class CabinCrewUser(HttpUser):
     @task
     def get_cabin_crew(self):
         # Define the payload for the POST request
-        payload = {'pnr': 'example_pnr'}
+        payload = {'pnr': '1034397'}
 
         # Send the POST request to the /getCabinCrew endpoint
         response = self.client.post("/getCabinCrew", data=payload)
