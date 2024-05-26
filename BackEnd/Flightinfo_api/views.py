@@ -12,7 +12,7 @@ def login():
     data = request.json
     username = data['username']
     password = data['password']
-    conn = create_connection("localhost",3306,"myDB","root", "1234")
+    conn = create_connection("localhost",3306,"myDB","root", 'password')
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM users WHERE username = \"{username}\"")
     data = cursor.fetchone()

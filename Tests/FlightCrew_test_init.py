@@ -1,90 +1,75 @@
-#BackEnd/FlightCrewAPI/main.py
+# test_flight_crew_api.py
 import unittest
 from unittest.mock import patch, MagicMock
-from BackEnd import (
-    create_connection,
-    findFlightByID,
-    findFlightsAdvanced,
-    findTicketsByFlightID,
-    findFlightPilotsByFlightID,
-)
+from flask import Flask, json
+from BackEnd.flightCrewAPI_1_01.views import views  # Adjust the import according to your project structure
 
-class TestFlightInfoAPI(unittest.TestCase):
-    @patch('myapp.mysql.connector.connect')
-    def test_create_connection(self, mock_connect):
-        mock_connection = MagicMock()
-        mock_connect.return_value = mock_connection
-
-        # Call the function with mock parameters
-        connection = create_connection('localhost', 3306, 'myDB', 'root', '1234')
-
-        # Check if the function returned the mocked connection
-        self.assertEqual(connection, mock_connection)
-
-    @patch('myapp.create_connection')
-    def test_find_flight_by_id(self, mock_create_connection):
+class TestFlightCrewAPI(unittest.TestCase):
+    @patch('BackEnd.flightCrewAPI_1_01.databaseConnection.create_connection')
+    def test_getFlightCrew(self, mock_create_connection):
+        # Set up the mock database connection and cursor
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
         mock_create_connection.return_value = mock_connection
-
-        # Define the mock response for the database query
-        mock_cursor.fetchone.return_value = (1, 'Flight 1', '2024-05-30', '10:00:00', 'NYC', 'LAX', '123ABC')
-
-        # Call the function with mock parameters
-        flight_info = findFlightByID(mock_connection, '123')
-
-        # Check if the function returns the expected flight information
-        self.assertEqual(flight_info, (1, 'Flight 1', '2024-05-30', '10:00:00', 'NYC', 'LAX', '123ABC'))
-
-    @patch('myapp.create_connection')
-    def test_find_flights_advanced(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
         mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
 
-        # Define the mock response for the database query
-        mock_cursor.fetchall.return_value = [(1, 'Flight 1'), (2, 'Flight 2')]
+        # Mock the database responses
+        mock_cursor.fetchall.side_effect = [
+            [("Pilot1",)],  # Result of the first query
+            [("English",), ("French",)],  # Result of the third query
+        ]
+        mock_cursor.fetchone.return_value = ("Pilot1", "John Doe", 35, "Male", "USA", "Boeing 747", 10, 10000)
 
-        # Call the function with mock parameters
-        filters = {'destination': 'LAX'}
-        flights = findFlightsAdvanced(mock_connection, filters)
+        # Set up the Flask app and test client
+        app = Flask(__name__)
+        app.register_blueprint(views, url_prefix='/api')
 
-        # Check if the function returns the expected list of flights
-        self.assertEqual(flights, [(1, 'Flight 1'), (2, 'Flight 2')])
+        with app.test_client() as client:
+            # Mock the request data
+            data = {'flightID': 'CS1031'}
 
-    @patch('myapp.create_connection')
-    def test_find_tickets_by_flight_id(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
+            # Call the function
+            response = client.post('/api/getFlightCrew', data=data)
+            response_data = json.loads(response.data)
 
-        # Define the mock response for the database query
-        mock_cursor.fetchall.return_value = [('Ticket1', 'John Doe'), ('Ticket2', 'Jane Smith')]
+            # Verify the response
+            expected_response = [{
+                "ID": "Pilot1",
+                "Name": "John Doe",
+                "Age": 35,
+                "Gender": "Male",
+                "Nationality": "USA",
+                "Vehicle": "Boeing 747",
+                "Seniority": 10,
+                "Max_Distance": 10000,
+                "Languages": ["English", "French"]
+            }]
+            self.assertEqual(response_data, expected_response)
 
-        # Call the function with mock parameters
-        tickets = findTicketsByFlightID(mock_connection, '123')
-
-        # Check if the function returns the expected list of tickets
-        self.assertEqual(tickets, [('Ticket1', 'John Doe'), ('Ticket2', 'Jane Smith')])
-
-    @patch('myapp.create_connection')
-    def test_find_flight_pilots_by_flight_id(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
-
-        # Define the mock response for the database query
-        mock_cursor.fetchall.return_value = [('Pilot1', 'John Doe'), ('Pilot2', 'Jane Smith')]
-
-        # Call the function with mock parameters
-        pilots = findFlightPilotsByFlightID(mock_connection, '123')
-
-        # Check if the function returns the expected list of pilots
-        self.assertEqual(pilots, [('Pilot1', 'John Doe'), ('Pilot2', 'Jane Smith')])
+            # Verify the database interactions
+            mock_cursor.execute.assert_any_call(
+                """
+                SELECT PILOT_ID
+                FROM FLIGHTPILOT
+                WHERE FLIGHT_ID="CS1031"
+                """
+            )
+            mock_cursor.execute.assert_any_call(
+                """
+                SELECT *
+                FROM FLIGHTCREW
+                WHERE ID="Pilot1"
+                """
+            )
+            mock_cursor.execute.assert_any_call(
+                """
+                SELECT LANGUAGE
+                FROM FLIGHTCREWKNOWNLANGUAGES
+                WHERE ID="Pilot1"
+                """
+            )
+            mock_cursor.close.assert_called_once()
+            mock_connection.close.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()

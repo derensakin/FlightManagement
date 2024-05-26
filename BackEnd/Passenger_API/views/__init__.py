@@ -1,7 +1,7 @@
 from flask import Blueprint, request
-from databaseConnection import create_connection
-from databaseConnection import findPassengersByFlightID
-from databaseConnection import change_seats
+from BackEnd.Passenger_API.databaseConnection import create_connection
+from BackEnd.Passenger_API.databaseConnection import findPassengersByFlightID
+from BackEnd.Passenger_API.databaseConnection import change_seats
 import json
 
 

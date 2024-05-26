@@ -13,7 +13,7 @@ views = Blueprint('views', __name__)
 def getCabinCrew():
     try:
         print("what")
-        conn = create_connection("localhost", 3306, "myDB", "root", "1234")
+        conn = create_connection("localhost", 3306, "myDB", "root", 'password')
         print("1")
         cabinCrewIDList = findCabinCrewIDs(conn, str(request.form.get('pnr')))
         print("sure?")

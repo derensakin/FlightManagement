@@ -1,79 +1,39 @@
-#get_passenger_api/app/main.py
 import unittest
-from unittest.mock import patch, MagicMock
-from BackEnd import (
-    create_connection,
-    assign_seat,
-    get_passengers,
-)
+from unittest.mock import MagicMock, patch
+from BackEnd.Passenger_API.views import views  # Import your Flask views here
+from BackEnd.Passenger_API.createApplication import create_app
 
-class TestPassengerAPI(unittest.TestCase):
-    @patch('myapp.mysql.connector.connect')
-    def test_create_connection(self, mock_connect):
-        mock_connection = MagicMock()
-        mock_connect.return_value = mock_connection
+class TestPassengerViews(unittest.TestCase):
+    
+    @patch('BackEnd.Passenger_API.databaseConnection.mysql.connector.connect')
+    @patch('BackEnd.Passenger_API.databaseConnection.findPassengersByFlightID')
+    def test_getPassenger(self, mock_findPassengersByFlightID, mock_create_connection):
+        # Setup
+        mock_conn = MagicMock()
+        mock_create_connection.return_value = mock_conn
+        mock_findPassengersByFlightID.return_value = ['123', '456']
+        expected_output = '{"passengers": ["123", "456"]}'
 
-        # Call the function with mock parameters
-        connection = create_connection()
+        # Test
+        with views.test_client() as client:
+            response = client.post('/getPassenger', data={'flight_id': 'ABC123'})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_data(as_text=True), expected_output)
 
-        # Check if the function returned the mocked connection
-        self.assertEqual(connection, mock_connection)
+    @patch('BackEnd.Passenger_API.databaseConnection.create_connection')
+    @patch('BackEnd.Passenger_API.databaseConnection.change_seats')
+    def test_changeSeats(self, mock_change_seats, mock_create_connection):
+        # Setup
+        mock_conn = MagicMock()
+        mock_create_connection.return_value = mock_conn
+        mock_change_seats.return_value = True
+        expected_output = '{"status": "success"}'
 
-    @patch('myapp.create_connection')
-    def test_assign_seat_infant(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
-
-        # Define the mock response for the database queries
-        mock_cursor.fetchone.side_effect = [(2, 'parent_seat')]
-
-        # Call the function with mock parameters
-        seat_number = assign_seat('infant_id', 'flight_id')
-
-        # Check if the function assigns the parent's seat for infants
-        self.assertEqual(seat_number, 'parent_seat')
-
-    @patch('myapp.create_connection')
-    def test_assign_seat_regular(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
-
-        # Define the mock response for the database queries
-        mock_cursor.fetchone.side_effect = [None, ('available_seat',)]
-
-        # Call the function with mock parameters
-        seat_number = assign_seat('regular_passenger_id', 'flight_id')
-
-        # Check if the function assigns an available seat for regular passengers
-        self.assertEqual(seat_number, 'available_seat')
-
-    @patch('myapp.create_connection')
-    def test_get_passengers(self, mock_create_connection):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_create_connection.return_value = mock_connection
-
-        # Define the mock response for the database query
-        mock_cursor.fetchall.return_value = [
-            ('passenger1_id', 'Passenger 1', 25, 'Male', 'US', 'Business', '1A'),
-            ('passenger2_id', 'Passenger 2', 30, 'Female', 'UK', 'Economy', '10B'),
-        ]
-
-        # Call the function with mock parameters
-        passengers = get_passengers()
-
-        # Check if the function returns the expected list of passengers
-        self.assertEqual(passengers, [
-            {"ID": 'passenger1_id', "Name": 'Passenger 1', "Age": 25, "Gender": 'Male',
-             "Nationality": 'US', "Seat Type": 'Business', "Seat Number": '1A'},
-            {"ID": 'passenger2_id', "Name": 'Passenger 2', "Age": 30, "Gender": 'Female',
-             "Nationality": 'UK', "Seat Type": 'Economy', "Seat Number": '10B'},
-        ])
+        # Test
+        with views.test_client() as client:
+            response = client.post('/changeSeats', data={'flight_id': 'ABC123', 'passenger_id1': '123', 'passenger_id2': '456'})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_data(as_text=True), expected_output)
 
 if __name__ == '__main__':
     unittest.main()

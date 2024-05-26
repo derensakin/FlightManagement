@@ -1,4 +1,4 @@
-from databaseConnection import create_connection
+from BackEnd.flightCrewAPI_1_01.databaseConnection import create_connection
 import json
 from flask import Blueprint, request
 
@@ -9,7 +9,7 @@ views = Blueprint('views', __name__)
 
 @views.route('/getFlightCrew', methods=['GET', 'POST'])
 def getFlightCrew():
-    connection = create_connection("localhost",3306,"myDB","root","1234")
+    connection = create_connection("localhost",3306,"myDB","root",'password')
     cursor = connection.cursor()
     flightId = request.form.get("flightID")
     print(flightId)
