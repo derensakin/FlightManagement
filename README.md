@@ -104,49 +104,73 @@
 
   # Steps
   1. Clone the repository:
-     * git clone https://github.com/yourusername/flight-management-system.git
+     * “` git clone https://github.com/yourusername/flight-management-system.git “`
      
   2. Navigate to the project directory:
-    *  cd flight-management-system
+    *  “` cd flight-management-system “`
 
   3. Set up and activate the virtual environment (optional but recommended):
-     * python -m venv venv
-     * source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+     * “` python -m venv venv “`
+     * “` source venv/bin/activate  # On Windows use `venv\Scripts\activate` “`
      
   4. Install backend dependencies:
-     * pip install -r requirements.txt
+     * “` pip install -r requirements.txt “`
      
   5. Install frontend dependencies:
-     * npm install
+     * “` npm install“`
 
   6. Set up the database:
-     * python manage.py migrate
+     * “` python manage.py migrate “`
      
  # Usage
 ## Running the Application
 1. Start the backend server:
+ * “`python manage.py runserver“`
+
 2. Start the frontend development server:
-3. Access the application at http://localhost:3000.
+   * “`npm start“`
+
+3.  Access the application at " http://localhost:3000 "
+
 
    ## Running with Docker
 1. Build the Docker images:
+   * “` docker-compose build “`
+
 2. Run the Docker containers:
+   * “` docker-compose up“`
+
 
 ##   Development
 
 ### Running Tests
 * Backend:
+  * “` python manage.py test “`
+
 * Frontend:
+  * “` npm test “`
+
   ## Deployment
 * Build the Docker images:
-* Run the Docker containers:
+* “` docker-compose build “`
 
-  Contributing
+* Run the Docker containers:
+* “` docker-compose up “`
+
+
+   ## Contributing
 
 1. Fork the repository.
+   
 2. Create a new branch:
+   * “` git checkout -b feature-name “`
+
 3. Make your changes and commit them:
+   * “` git commit -m "Add feature" “`
+
 4. Push to the branch:
+   * “` git push origin feature-name “`
+
 5. Open a pull request.
 
 ## Team Members and Responsibilities
