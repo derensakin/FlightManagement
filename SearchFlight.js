@@ -1,48 +1,42 @@
-// src/components/SearchFlight.js
 import React, { useState } from 'react';
+import { TextField, Button, Grid } from '@mui/material';
 
 const SearchFlight = ({ onSearch }) => {
-  const [searchParams, setSearchParams] = useState({
-    flightNumber: '',
-    departureDate: '',
-    departurePlace: '',
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSearchParams((prevParams) => ({ ...prevParams, [name]: value }));
-  };
+  const [flightID, setFlightID] = useState('');
+  const [departureDate, setDepartureDate] = useState('');
 
   const handleSearch = () => {
-    onSearch(searchParams);
+    onSearch({ flightID, departureDate });
   };
 
   return (
-    <div>
-      <h3>Search Flight</h3>
-      <input
-        type="text"
-        name="flightNumber"
-        value={searchParams.flightNumber}
-        onChange={handleChange}
-        placeholder="Enter flight number"
-      />
-      <input
-        type="date"
-        name="departureDate"
-        value={searchParams.departureDate}
-        onChange={handleChange}
-        placeholder="Enter departure date"
-      />
-      <input
-        type="text"
-        name="departurePlace"
-        value={searchParams.departurePlace}
-        onChange={handleChange}
-        placeholder="Enter departure place"
-      />
-      <button onClick={handleSearch}>Search</button>
-    </div>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={6}>
+        <TextField
+          fullWidth
+          label="Flight ID"
+          value={flightID}
+          onChange={(e) => setFlightID(e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <TextField
+          fullWidth
+          label="Departure Date"
+          type="date"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={departureDate}
+          onChange={(e) => setDepartureDate(e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Button variant="contained" color="primary" onClick={handleSearch}>
+          Search
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 

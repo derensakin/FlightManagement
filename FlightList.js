@@ -1,76 +1,66 @@
-// src/components/FlightList.js
 import React, { useEffect, useState } from 'react';
-import SeatingPlan from './SeatingPlan';
+import axios from 'axios';
+import { Container, Typography, Grid, Paper } from '@mui/material';
 
-const FlightList = ({ searchParams }) => {
+const FlightList = () => {
   const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchFlights = async () => {
-      // Mock data for demonstration purposes
-      const mockData = [
-        {
-          number: '1',
-          from: 'New York',
-          to: 'Los Angeles',
-          time: '10:00 AM',
-          flightCrew: 'Crew 1',
-          cabinCrew: 'Cabin 1',
-          passengerList: ['Passenger 1', 'Passenger 2'],
-          seatingPlan: [
-            ['1A', '1B', '1C'],
-            ['2A', '2B', '2C'],
-            ['3A', '3B', '3C'],
-          ],
-        },
-        {
-          number: '2',
-          from: 'Chicago',
-          to: 'Miami',
-          time: '12:00 PM',
-          flightCrew: 'Crew 2',
-          cabinCrew: 'Cabin 2',
-          passengerList: ['Passenger 3', 'Passenger 4'],
-          seatingPlan: [
-            ['1A', '1B', '1C'],
-            ['2A', '2B', '2C'],
-            ['3A', '3B', '3C'],
-          ],
-        },
-      ];
+      try {
+        let formdata = new FormData();
+        formdata.append("flightID", "CS1003");
+        const config = {
+          headers: {
+            "content-type": "multipart/form-data"
+          }
+        };
 
-      setFlights(mockData);
+        const response = await axios.post('http://localhost:5020/getFlight', formdata, config);
+
+        // Handle the response
+        if (response.data) {
+          // Ensure it's an array
+          const flightsArray = Array.isArray(response.data) ? response.data : [response.data];
+          setFlights(flightsArray);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchFlights();
-  }, [searchParams]);
+  }, []);
 
-  if (!flights.length) {
-    return <div>No flights found</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading flights: {error.message}</div>;
+  if (!flights.length) return <div>No flights found</div>;
 
   return (
-    <div>
-      <h3>Flight Information</h3>
-      {flights.map((flight) => (
-        <div key={flight.number}>
-          <p>From: {flight.from}</p>
-          <p>To: {flight.to}</p>
-          <p>Time: {flight.time}</p>
-          <h4>Flight Crew</h4>
-          <p>{flight.flightCrew}</p>
-          <h4>Cabin Crew</h4>
-          <p>{flight.cabinCrew}</p>
-          <h4>Passenger List</h4>
-          <ul>
-            {flight.passengerList.map((passenger, index) => (
-              <li key={index}>{passenger}</li>
-            ))}
-          </ul>
-          <SeatingPlan seatingPlan={flight.seatingPlan} />
-        </div>
-      ))}
-    </div>
+    <Container>
+      <Typography variant="h5" gutterBottom>Flight List</Typography>
+      <Grid container spacing={3}>
+        {flights.map((flight) => (
+          <Grid item xs={12} key={flight.id}>
+            <Paper style={{ padding: '16px' }}>
+              <Typography variant="h6">Flight Information</Typography>
+              <Typography>From: {flight.source_city}, {flight.source_country}</Typography>
+              <Typography>Airport: {flight.source_airport} ({flight.source_airport_code})</Typography>
+              <Typography>To: {flight.destination_city}, {flight.destination_country}</Typography>
+              <Typography>Departure Time: {flight.departure_date}</Typography>
+              <Typography>Duration: {flight.duration} minutes</Typography>
+              <Typography>Distance: {flight.distance} km</Typography>
+              <Typography>Vehicle: {flight.vehicle}</Typography>
+              <Typography>Shared Flight: {flight.shared_flight}</Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

@@ -2,15 +2,15 @@ import React from 'react';
 import FlightList from './FlightList';
 import { useSearchParams } from '../SearchParamsContext';
 
-const PassengerPage = () => {
+const CabinCrewPage = () => {
   const { searchParams } = useSearchParams();
 
   return (
     <div>
-      <h2>Passenger Dashboard</h2>
+      <h2>Crew Dashboard</h2>
       {searchParams && <FlightList searchParams={searchParams} />}
     </div>
   );
 };
 
-export default PassengerPage;
+export default CabinCrewPage;
